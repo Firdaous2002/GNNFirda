@@ -60,7 +60,7 @@ class CombinedExplainer(Explainer):
         differentiable_output = self.graph_perturber.forward(graph.x) 
         model_out, _, V_pert, EP_x = self.graph_perturber.forward_prediction(graph.x) 
         #print('pert', V_pert)
-        y_pred_new_actual = torch.argmax(model_out, dim=1)
+        y_pred_new_actual = (torch.sigmoid(model_out) > 0.5).float()
         
         edge_loss, cf_edges = self.graph_perturber.edge_loss(graph)
         node_loss, _ = self.graph_perturber.node_loss(graph)
@@ -86,13 +86,13 @@ class CombinedExplainer(Explainer):
 
         counterfactual = None
 
-        if torch.any(y_pred_new_actual[graph.new_idx] != graph.targets[graph.new_idx]) and loss.item() < self.best_loss:
+        if torch.any(y_pred_new_actual[graph.new_idx] == graph.targets[graph.new_idx]) and loss.item() < self.best_loss:
             
             counterfactual = build_counterfactual_graph(x=V_pert,
                                        edge_index=cf_edges, 
                                        graph=graph, 
                                        oracle=oracle, 
-                                       output_actual=model_out, 
+                                       output_actual=y_pred_new_actual, 
                                        device=self.device)
 
             self.best_loss = loss.item()
