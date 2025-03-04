@@ -73,7 +73,7 @@ class CFExplainerFeatures(Explainer):
 
         counterfactual = None
 
-        if torch.any(y_pred_new_actual[graph.new_idx] != graph.targets[graph.new_idx]) and loss.item() < self.best_loss:
+        if torch.any(y_pred_new_actual[graph.new_idx] == graph.targets[graph.new_idx]) and loss.item() < self.best_loss:
    
 
             
@@ -81,7 +81,7 @@ class CFExplainerFeatures(Explainer):
                                        edge_index=edge_index, 
                                        graph=graph, 
                                        oracle=oracle, 
-                                       output_actual=model_out, 
+                                       output_actual=y_pred_new_actual, 
                                        device=self.device)
 
             self.best_loss = loss.item()
