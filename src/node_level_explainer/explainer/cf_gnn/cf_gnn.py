@@ -112,7 +112,7 @@ class CFExplainer(Explainer):
         counterfactual = None
 
         # Build a counterfactual graph if the conditions on fidelity loss and sparsity loss are satisfied
-        if y_non_differentiable == graph.targets[graph.new_idx] and loss.item() < self.best_loss:
+        if torch.sum(y_non_differentiable == graph.targets[graph.new_idx])>1 and loss.item() < self.best_loss:
             
             counterfactual = build_counterfactual_graph(graph.x, edge_index, graph, oracle, output_actual)
             

@@ -47,8 +47,8 @@ class CFExplainerFeatures(Explainer):
             if new_sample is not None:
                 best_cf_example = new_sample
         
-        print('controfattuale', best_cf_example)
-        print('controfattuale_x', best_cf_example.x)
+        #print('controfattuale', best_cf_example)
+        #print('controfattuale_x', best_cf_example.x)
         return best_cf_example
     
 
@@ -73,7 +73,7 @@ class CFExplainerFeatures(Explainer):
 
         counterfactual = None
 
-        if torch.all(y_pred_new_actual[graph.new_idx] == graph.targets[graph.new_idx]) and loss.item() < self.best_loss:
+        if torch.any(y_pred_new_actual[graph.new_idx] != graph.targets[graph.new_idx]) and loss.item() < self.best_loss:
    
 
             

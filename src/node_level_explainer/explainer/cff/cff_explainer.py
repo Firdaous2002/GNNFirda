@@ -61,7 +61,7 @@ class CFFExplainer(Explainer):
             
             y_new = torch.argmax(out[graph.new_idx])
 
-            if y_new == graph.targets[graph.new_idx] and loss < best_loss:
+            if torch.sum(y_new != graph.targets[graph.new_idx]) > 1 and loss < best_loss:
                 
                 counterfactual = build_counterfactual_graph(x=graph.x, edge_index=edge_index_counterfactual, graph=graph, oracle=oracle, output_actual=out)
                 

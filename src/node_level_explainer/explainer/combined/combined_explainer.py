@@ -54,12 +54,12 @@ class CombinedExplainer(Explainer):
     def train(self, graph: Data, oracle, epoch) -> Data:
         
         
-        print('ciao')
+        #print('ciao')
         self.optimizer.zero_grad()
-        print('v_xorig', graph.x)
+        #print('v_xorig', graph.x)
         differentiable_output = self.graph_perturber.forward(graph.x) 
         model_out, _, V_pert, EP_x = self.graph_perturber.forward_prediction(graph.x) 
-        print('pert', V_pert)
+        #print('pert', V_pert)
         y_pred_new_actual = torch.argmax(model_out, dim=1)
         
         edge_loss, cf_edges = self.graph_perturber.edge_loss(graph)
@@ -75,7 +75,7 @@ class CombinedExplainer(Explainer):
 
         y_target = graph.targets[node_to_explain].unsqueeze(0)  # Counterfactual target
                 
-        eta = ((y_target != torch.argmax(y_node_predicted)) or (y_target != torch.argmax(y_node_predicted_non_diff))).float()
+        eta = (torch.sum((y_target != torch.argmax(y_node_predicted))) > 1 or torch.sum((y_target != torch.argmax(y_node_predicted_non_diff))) > 1).float()
         
         loss_pred = torch.nn.functional.cross_entropy(y_node_predicted, y_target)        
         
@@ -86,7 +86,7 @@ class CombinedExplainer(Explainer):
 
         counterfactual = None
 
-        if y_pred_new_actual[graph.new_idx] == graph.targets[graph.new_idx] and loss.item() < self.best_loss:
+        if torch.any(y_pred_new_actual[graph.new_idx] != graph.targets[graph.new_idx]) and loss.item() < self.best_loss:
             
             counterfactual = build_counterfactual_graph(x=V_pert,
                                        edge_index=cf_edges, 

@@ -52,7 +52,7 @@ class NodesExplainerWrapper(Wrapper):
         - dict: A dictionary containing the results of the explanation process and metrics.
         """
         print(f"{explainer=}")
-        print('shape_of_y', data.y.shape)
+        #print('shape_of_y', data.y.shape)
         
         
         # Determine the device to use (GPU if available and configured, otherwise CPU)
@@ -93,9 +93,9 @@ class NodesExplainerWrapper(Wrapper):
                 pid: int = 0
                 
                 # Iterate over the test mask indices
-                print(data.test_mask)
+                #print(data.test_mask)
                 for mask_index in tqdm(data.test_mask):
-                    print(mask_index)
+                    #print(mask_index)
                     pid += 1
                     n_hops = len(self.cfg.model.hidden_layers) + 1
                     
@@ -112,8 +112,8 @@ class NodesExplainerWrapper(Wrapper):
                     if check_graphs(factual_graph.edge_index):
                         continue
                     
-                    print('fattuale', factual_graph)
-                    print('la sua x', factual_graph.x)
+                    #print('fattuale', factual_graph)
+                    #print('la sua x', factual_graph.x)
                     # Pass everything on CPU because of Queue
                     args = (oracle.cpu(), factual_graph, explainer, datainfo, self.cfg, pid, self.wandb_run, device)
                     queue.put(args)

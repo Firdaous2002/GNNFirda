@@ -66,8 +66,8 @@ def fidelity(factual: Data, counterfactual: Data) -> float:
     y = factual.y_ground[factual_index]
     phi_G_i = counterfactual.y[cfactual_index]
     
-    prediction_fidelity = 1 if phi_G == y else 0
-    counterfactual_fidelity = 1 if phi_G_i == y else 0
+    prediction_fidelity = 1 if torch.sum(phi_G == y) > 1 else 0
+    counterfactual_fidelity = 1 if torch.sum(phi_G_i == y) > 1 else 0
     
     return prediction_fidelity - counterfactual_fidelity
 

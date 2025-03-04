@@ -71,7 +71,7 @@ class EdgePerturber(Perturber):
         y_target = graph.targets[node_to_explain].unsqueeze(0)  # Counterfactual target
 
         # Calculate if the prediction is already flipped
-        pred_same = (y_node_non_differentiable == y_node_oracle_original).float()
+        pred_same = (torch.sum(y_node_non_differentiable == y_node_oracle_original)== 0).float()
 
         # Generate perturbed edge index (with edge weights)
         cf_edge_weights = torch.sigmoid(self.P_x)  # Learnable edge weights (perturbations)
