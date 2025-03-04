@@ -79,7 +79,7 @@ def train(cfg):
         dataset = dataset.to(device)
         oracle = oracle.to(device)
         datainfo.kfold = cfg.general.seed
-        trainer = MultilabelTrainer if cfg.task.name == "Node" else GraphTrainer
+        trainer = MultilabelTrainer if cfg.task.name == "node" else GraphTrainer
         loss_fn = nn.BCEWithLogitsLoss()
         trainer = MultilabelTrainer(cfg=cfg, dataset=dataset, model=oracle, loss=loss_fn)
 

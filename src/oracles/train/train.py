@@ -196,7 +196,7 @@ class MultilabelTrainer:
         # Compute loss on the training nodes (convert target to float)
         loss_train = self.loss(output[self.dataset.train_mask], self.dataset.y[self.dataset.train_mask].float())
         loss_train.backward()
-        clip_grad_norm_(self.model.parameters(), self.cfg.trainer.clip)
+        #clip_grad_norm_(self.model.parameters(), self.cfg.trainer.clip)
         self.optimizer.step()
         # For multilabel, apply sigmoid and threshold at 0.5 to get binary predictions.
         predictions = (torch.sigmoid(output[self.dataset.train_mask]) > 0.5).float()
