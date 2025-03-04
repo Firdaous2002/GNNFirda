@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv, GraphConv, ChebConv, global_mean_pool
 
+
 class GCN(nn.Module):
     """
     Graph Convolutional Network (GCN) with multiple hidden layers.
@@ -17,7 +18,6 @@ class GCN(nn.Module):
         super(GCN, self).__init__()
         self.layers = nn.ModuleList()
         self.dropout = cfg.model.dropout
-        self.multilabel = getattr(cfg.model, "multilabel", False)
 
         # Input layer
         self.layers.append(GCNConv(num_features, cfg.model.hidden_layers[0]))
@@ -52,11 +52,7 @@ class GCN(nn.Module):
         
         x = torch.cat(layer_outputs, dim=1)
         x = self.output_layer(x)
-        #if self.multilabel:
-        #print('broh')
-        return x  # raw logits; BCEWithLogitsLoss will apply sigmoid internally
-        #else:
-            #return F.log_softmax(x, dim=1)
+        return F.log_softmax(x, dim=1)
 
     def get_embedding_repr(self, x: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor:
         """
@@ -77,18 +73,19 @@ class GCN(nn.Module):
     
 class ChebNet(nn.Module):
     """
-    Chebyshev Graph Convolutional Network (ChebNet) for multi-label classification.
+    Chebyshev Graph Convolutional Network (ChebNet) with multiple hidden layers.
 
     Args:
         num_features (int): Number of input features.
-        num_classes (int): Number of output classes (labels in multi-label).
-        cfg: Configuration dictionary.
+        hidden_layers (List[int]): List of hidden layer sizes.
+        num_classes (int): Number of output classes.
+        K (int, optional): Chebyshev polynomial order. Default is 3.
+        dropout (float, optional): Dropout rate. Default is 0.5.
     """
     def __init__(self, num_features: int, num_classes: int, cfg):
         super(ChebNet, self).__init__()
         self.layers = nn.ModuleList()
         self.dropout = cfg.model.dropout
-        self.multilabel = getattr(cfg.model, "multilabel", False)  # Ensure multi-label flag is recognized
 
         # Input layer
         self.layers.append(ChebConv(num_features, cfg.model.hidden_layers[0], K=cfg.model.K))
@@ -110,7 +107,7 @@ class ChebNet(nn.Module):
             edge_weights (torch.Tensor, optional): Edge weights. Default is None.
 
         Returns:
-            torch.Tensor: Raw logits (to be used with BCEWithLogitsLoss).
+            torch.Tensor: Log-softmax output.
         """
         for layer in self.layers:
             if edge_weights is not None:
@@ -119,8 +116,8 @@ class ChebNet(nn.Module):
                 x = F.relu(layer(x, edge_index))
             x = F.dropout(x, self.dropout, training=self.training)
         
-        x = self.output_layer(x)  # Raw logits for BCEWithLogitsLoss()
-        return x  # No softmax or log_softmax!
+        x = self.output_layer(x)
+        return F.log_softmax(x, dim=1)
 
     def get_embedding_repr(self, x: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor:
         """
@@ -137,7 +134,7 @@ class ChebNet(nn.Module):
             x = F.relu(layer(x, edge_index))
             x = F.dropout(x, self.dropout, training=self.training)
         return x
-
+    
     
 
 class GraphConvNet(nn.Module):

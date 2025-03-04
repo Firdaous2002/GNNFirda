@@ -94,7 +94,8 @@ class NodesExplainerWrapper(Wrapper):
                 
                 # Iterate over the test mask indices
                 #print(data.test_mask)
-                for mask_index in tqdm(data.test_mask):
+                for mask_index in tqdm(data.test_mask[:10]):  # Select only the first 10 nodes
+
                     #print(mask_index)
                     pid += 1
                     n_hops = len(self.cfg.model.hidden_layers) + 1

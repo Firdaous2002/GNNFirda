@@ -47,8 +47,9 @@ class CFExplainerFeatures(Explainer):
             if new_sample is not None:
                 best_cf_example = new_sample
         
-        #print('controfattuale', best_cf_example)
-        #print('controfattuale_x', best_cf_example.x)
+        print('controfattuale', best_cf_example)
+        print('controfattuale_x', best_cf_example.x)
+        print('la_y', best_cf_example.y)
         return best_cf_example
     
 

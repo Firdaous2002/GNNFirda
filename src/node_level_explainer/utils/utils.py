@@ -288,7 +288,7 @@ def build_counterfactual_graph(x: Tensor, edge_index: Tensor, graph: Data, oracl
     
     counterfactual = Data(x=x, 
                           edge_index=edge_index, 
-                          y=torch.argmax(output_actual, dim=1),
+                          y=(torch.sigmoid(output_actual) > 0.5).float(),
                           sub_index=graph.new_idx,
                           x_projection=torch.mean(oracle.get_embedding_repr(graph.x, edge_index), dim=0))
     
