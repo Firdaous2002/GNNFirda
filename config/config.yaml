@@ -5,7 +5,7 @@ defaults:
   - optimizer: adam
   - general: general_default
   - task:  node # Can be: node or graph
-  - explainer: cf-gnnfeatures #cf-gnn #cf-gnnfeatures # Can be: cf-gnnfeatures cf-gnn random-feat random cff unr combined
+  - explainer: cf-gnn #cf-gnn #cf-gnnfeatures # Can be: cf-gnnfeatures cf-gnn random-feat random cff unr combined
   - trainer: naive_trainer
   - logger: wandb
   - scheduler: scheduler

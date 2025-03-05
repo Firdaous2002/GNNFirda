@@ -99,7 +99,8 @@ class CFExplainer(Explainer):
         
         # Calculate the non-differentiable target using the oracle's predictions
         y_non_differentiable = torch.argmax(output_actual[graph.new_idx])
-        
+        y_pred_new_actual = (torch.sigmoid(output_actual) > 0.5).float()
+
         # Compute the loss
         loss, edge_index = self.edge_perturber.loss(graph, output, y_non_differentiable)
         
